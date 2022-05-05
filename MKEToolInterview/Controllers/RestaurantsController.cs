@@ -16,10 +16,12 @@ namespace MKEToolInterview.Controllers
     public class RestaurantsController : ControllerBase
     {
         private RestaurantService RestaurantService { get; set; }
+        private ReviewService ReviewService { get; set; }
 
-        public RestaurantsController(RestaurantService restaurantService)
+        public RestaurantsController(RestaurantService restaurantService, ReviewService reviewService)
         {
             RestaurantService = restaurantService;
+            ReviewService = reviewService;
         }
 
         // TODO: probably would eventually implement some sort of auth to e.g. restrict, say, deleting or updating to admin users, but likely not fitting in the first pass.
@@ -77,14 +79,12 @@ namespace MKEToolInterview.Controllers
             return new OkResult();
         }
 
-        [HttpPost("{id}/reviews")]
-        public IActionResult CreateReview(RestaurantReview review)
+        [HttpPost("{restaurantId}/reviews")]
+        public async Task<IActionResult> CreateReview(RestaurantReview review, string restaurantId)
         {
-            // TODO (needed for interview version): implement storing new review in dynamo, return ID stored
+            var newId = await ReviewService.CreateNewReview(review, restaurantId);
 
-            // TODO: also have it update the average rating on the summary doc (keep a todo around because dynamo doesn't handle that great (but it is free!))
-
-            return new OkResult();
+            return new OkObjectResult(newId);
         }
 
         [HttpPut("{id}/reviews/{reviewId}")]
@@ -96,25 +96,10 @@ namespace MKEToolInterview.Controllers
             return new OkResult();
         }
 
-        [HttpGet("{id}/reviews")]
-        public IEnumerable<RestaurantReview> GetReviewsForRestaurant(string id)
+        [HttpGet("{restaurantId}/reviews")]
+        public async Task<IEnumerable<RestaurantReview>> GetReviewsForRestaurant(string restaurantId)
         {
-            // TODO (needed for interview version): implement retrieving reviews from dynamo
-
-            return new[] {
-                new RestaurantReview
-                {
-                    User = "Some Person",
-                    ReviewText = "This restaurant was ok.",
-                    Rating = 3
-                },
-                new RestaurantReview
-                {
-                    User = "Some Other Person",
-                    ReviewText = "This restaurant was lovely, I had a good meal.",
-                    Rating = 4.5
-                }
-            };
+            return await ReviewService.GetAllReviewsForRestaurant(restaurantId);
         }
 
         [HttpGet("{id}/reviews/{reviewId}")]
