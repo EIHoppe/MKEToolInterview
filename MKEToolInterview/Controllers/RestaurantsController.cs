@@ -3,6 +3,7 @@ using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MKEToolInterview.Models;
+using MKEToolInterview.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,34 +15,21 @@ namespace MKEToolInterview.Controllers
     [ApiController]
     public class RestaurantsController : ControllerBase
     {
+        private RestaurantService RestaurantService { get; set; }
+
+        public RestaurantsController(RestaurantService restaurantService)
+        {
+            RestaurantService = restaurantService;
+        }
+
         // TODO: probably would eventually implement some sort of auth to e.g. restrict, say, deleting or updating to admin users, but likely not fitting in the first pass.
 
         [HttpPost]
         public async Task<IActionResult> CreateRestaurant(RestaurantSummary summary)
         {
-            // TODO (needed for interview version): implement storing summary data in dynamo, return ID stored
-            var client = new AmazonDynamoDBClient();
+            var newId = await RestaurantService.CreateNewRestaurant(summary);
 
-            // Generate a guid to act as the summary's ID, and apply it to the summary object to be stored
-            summary.Id = Guid.NewGuid();
-
-            var attributeValues = RestaurantSummaryMapper.MapToDynamoAttributes(summary);
-
-            // TODO: refactor the dynamo code into a more proper data access layer
-
-            var writeRequest = new WriteRequest
-            {
-                PutRequest = new PutRequest { Item = attributeValues }
-            };
-
-            var requestItems = new Dictionary<string, List<WriteRequest>>();
-            requestItems["mketool-restaurants"] = new List<WriteRequest> { writeRequest };
-
-            var request = new BatchWriteItemRequest { RequestItems = requestItems };
-
-            var response = await client.BatchWriteItemAsync(request);
-
-            return new OkObjectResult(response);
+            return new OkObjectResult(newId);
         }
 
         [HttpGet]

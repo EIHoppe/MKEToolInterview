@@ -1,10 +1,11 @@
 ﻿using Amazon.DynamoDBv2.Model;
+using MKEToolInterview.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MKEToolInterview.Models
+namespace MKEToolInterview.Service.Mappers
 {
     public class RestaurantSummaryMapper
     {

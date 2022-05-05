@@ -8,6 +8,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.1.0" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.3.30" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MKEToolInterview.Service\MKEToolInterview.Service.csproj" />
   </ItemGroup>
 </Project>
