@@ -29,6 +29,7 @@ namespace MKEToolInterview
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<RestaurantService>();
+            services.AddSingleton<ReviewService>();
             services.AddSingleton<AmazonDynamoDBClient>();
 
             services.AddControllers();
