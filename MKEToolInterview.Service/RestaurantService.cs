@@ -1,9 +1,11 @@
 ﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using MKEToolInterview.Models;
 using MKEToolInterview.Service.Mappers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MKEToolInterview.Service
@@ -42,6 +44,23 @@ namespace MKEToolInterview.Service
             await DynamoDBClient.BatchWriteItemAsync(request);
 
             return summary.Id;
+        }
+
+        public async Task<IEnumerable<RestaurantSummary>> GetAllRestaurants()
+        {
+            var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
+            var scanFilter = new ScanFilter();
+            scanFilter.AddCondition("SortKey", ScanOperator.Equal, "Summary");
+
+            var search = restaurantTable.Scan(scanFilter);
+
+            var results = new List<Document>();
+            do
+            {
+                results.AddRange(await search.GetNextSetAsync());
+            } while (!search.IsDone);
+
+            return results.Select(x => RestaurantSummaryMapper.MapFromDynamoDocument(x));
         }
     }
 }

@@ -33,29 +33,9 @@ namespace MKEToolInterview.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<RestaurantSummary> GetAllRestaurants()
+        public async Task<IEnumerable<RestaurantSummary>> GetAllRestaurants()
         {
-            // TODO (needed for interview version): implement retrieving summary data from dynamo
-
-            return new[]
-            {
-                new RestaurantSummary
-                {
-                    Name = "Restaurante Firste",
-                    Address = "123 Fake Street Milwaukee, WI 53202",
-                    Description = "It is a restaurant. It is also first.",
-                    AverageRating = 4.3,
-                    Hours = "Sun-Thurs 11-9, Fri-Sat 11-11"
-                },
-                new RestaurantSummary
-                {
-                    Name = "Restaurant The Second",
-                    Address = "338 Other Street Milwaukee, WI 53205",
-                    Description = "It is a different restaurant. It is second I suppose.",
-                    AverageRating = 3.8,
-                    Hours = "Sun-Sat 12-8"
-                }
-            };
+            return await RestaurantService.GetAllRestaurants();
         }
 
         [HttpGet("{id}")]
