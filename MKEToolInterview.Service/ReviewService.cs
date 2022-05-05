@@ -92,6 +92,16 @@ namespace MKEToolInterview.Service
             await UpdateAverageRatingOnRestaurant(restaurant);
         }
 
+        public async Task DeleteReview(string restaurantId, string reviewId)
+        {
+            var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
+            await restaurantTable.DeleteItemAsync(restaurantId, $"Review#{reviewId}");
+
+            var restaurant = await RestaurantService.GetRestaurantById(restaurantId);
+
+            await UpdateAverageRatingOnRestaurant(restaurant);
+        }
+
         private async Task UpdateAverageRatingOnRestaurant(RestaurantSummary summary)
         {
             var reviews = (await GetAllReviewsForRestaurant(summary.Id.ToString())).ToList();

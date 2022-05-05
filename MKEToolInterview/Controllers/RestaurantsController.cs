@@ -120,10 +120,10 @@ namespace MKEToolInterview.Controllers
             };
         }
 
-        [HttpDelete("{id}/reviews/{reviewId}")]
-        public IActionResult DeleteReviewById(string id, string reviewId)
+        [HttpDelete("{restaurantId}/reviews/{reviewId}")]
+        public async Task<IActionResult> DeleteReviewById(string restaurantId, string reviewId)
         {
-            // TODO (needed for interview version): implement deleting reviews from dynamo
+            await ReviewService.DeleteReview(restaurantId, reviewId);
 
             return new OkResult();
         }
