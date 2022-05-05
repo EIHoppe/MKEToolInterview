@@ -45,9 +45,15 @@ namespace MKEToolInterview.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateRestaurant(RestaurantSummary summary, string id)
+        public async Task<IActionResult> UpdateRestaurant(RestaurantSummary summary, string id)
         {
-            // TODO (needed for interview version): implement update
+            // Quick validation to make sure there isn't any weird things like the new version having a different ID
+            if (summary.Id.ToString() != id)
+            {
+                return BadRequest("Body's ID does not match the id in the URL");
+            }
+
+            await RestaurantService.UpdateRestaurant(summary);
 
             return new OkResult();
         }

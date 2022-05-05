@@ -29,6 +29,24 @@ namespace MKEToolInterview.Service.Mappers
             return values;
         }
 
+        // This explicitly needs to be a Dictionary and not an IDictionary to match Dynamo's API.
+        public static Document MapToDynamoDocument(RestaurantSummary summary)
+        {
+            var document = new Document();
+            document["RestaurantId"] = summary.Id.ToString();
+            document["Name"] = summary.Name;
+            document["Address"] = summary.Address;
+            document["Description"] = summary.Description;
+            document["Hours"] = summary.Hours;
+            if (summary.AverageRating != null)
+            {
+                document["AverageRating"] = summary.AverageRating.Value.ToString();
+            }
+            document["SortKey"] = "Summary"; // TODO: figure out a better way to handle the SK
+
+            return document;
+        }
+
         public static RestaurantSummary MapFromDynamoDocument(Document restaurantDocument)
         {
             // Average Rating is nullable, so handle that separately first
