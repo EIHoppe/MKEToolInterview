@@ -107,17 +107,15 @@ namespace MKEToolInterview.Controllers
             return await ReviewService.GetAllReviewsForRestaurant(restaurantId);
         }
 
-        [HttpGet("{id}/reviews/{reviewId}")]
-        public RestaurantReview GetReviewById(string id, string reviewId)
+        [HttpGet("{restaurantId}/reviews/{reviewId}")]
+        public async Task<ActionResult<RestaurantReview>> GetReviewById(string restaurantId, string reviewId)
         {
-            // TODO (needed for interview version): implement retrieving reviews from dynamo
-
-            return new RestaurantReview
+            var review = await ReviewService.GetReviewById(restaurantId, reviewId);
+            if (review == null)
             {
-                User = "Some Person",
-                ReviewText = "This restaurant was ok.",
-                Rating = 3
-            };
+                return new NotFoundResult();
+            }
+            return review;
         }
 
         [HttpDelete("{restaurantId}/reviews/{reviewId}")]

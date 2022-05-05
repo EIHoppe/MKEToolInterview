@@ -80,6 +80,21 @@ namespace MKEToolInterview.Service
             return results.Select(x => RestaurantReviewMapper.MapFromDynamoDocument(x));
         }
 
+        public async Task<RestaurantReview> GetReviewById(string restaurantId, string reviewId)
+        {
+            var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
+            var reviewDoc = await restaurantTable.GetItemAsync(restaurantId, $"Review#{reviewId}");
+
+            RestaurantReview review = null;
+
+            if (reviewDoc != null)
+            {
+                review = RestaurantReviewMapper.MapFromDynamoDocument(reviewDoc);
+            }
+
+            return review;
+        }
+
         public async Task UpdateReview(RestaurantReview review)
         {
             var document = RestaurantReviewMapper.MapToDynamoDocument(review);
