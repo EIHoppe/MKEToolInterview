@@ -58,6 +58,12 @@ namespace MKEToolInterview.Controllers
                 return BadRequest("Body's ID does not match the id in the URL");
             }
 
+            // Ensure the restaurant's rating will not be updated, by nulling it out.
+            // Any updates to the rating will be triggered via any updates to its ratings.
+            // Note: the mapper at present omits the AverageRating attribute entirely when mapping right now;
+            //   if that changes, this code will need to update to handle that.
+            summary.AverageRating = null;
+
             await RestaurantService.UpdateRestaurant(summary);
 
             return new OkResult();

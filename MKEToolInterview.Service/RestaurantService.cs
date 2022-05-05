@@ -83,11 +83,8 @@ namespace MKEToolInterview.Service
 
         public async Task UpdateRestaurant(RestaurantSummary summary)
         {
-            // Ensure the restaurant's rating will not be updated, by nulling it out.
-            // Any updates to the rating will be triggered via any updates to its ratings.
-            // Note: the mapper at present omits the AverageRating attribute entirely when mapping right now;
-            //   if that changes, this code will need to update to handle that.
-            summary.AverageRating = null;
+            // Note: ensuring ratings aren't updated from a PUT occurs in the controller.
+            // This is because this same codepath will be used to update the rating when reviews are changed.
 
             var document = RestaurantSummaryMapper.MapToDynamoDocument(summary);
             var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
