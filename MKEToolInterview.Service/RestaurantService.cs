@@ -14,6 +14,14 @@ namespace MKEToolInterview.Service
 
     public class RestaurantService
     {
+        private AmazonDynamoDBClient DynamoDBClient { get; set; }
+        private const string TableName = "mketool-restaurants";
+
+        public RestaurantService(AmazonDynamoDBClient dynamoDbClient)
+        {
+            DynamoDBClient = dynamoDbClient;
+        }
+
         public async Task<Guid> CreateNewRestaurant(RestaurantSummary summary)
         {
             // Generate a guid to act as the summary's ID, and apply it to the summary object to be stored in dynamo
@@ -27,13 +35,11 @@ namespace MKEToolInterview.Service
             };
 
             var requestItems = new Dictionary<string, List<WriteRequest>>();
-            requestItems["mketool-restaurants"] = new List<WriteRequest> { writeRequest };
+            requestItems[TableName] = new List<WriteRequest> { writeRequest };
 
             var request = new BatchWriteItemRequest { RequestItems = requestItems };
 
-            var client = new AmazonDynamoDBClient();
-
-            await client.BatchWriteItemAsync(request);
+            await DynamoDBClient.BatchWriteItemAsync(request);
 
             return summary.Id;
         }
