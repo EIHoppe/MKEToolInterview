@@ -68,7 +68,8 @@ namespace MKEToolInterview.Service
 
         public async Task<RestaurantSummary> GetRestaurantById(string id)
         {
-            var restaurantDoc = await GetRestaurantDocumentById(id);
+            var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
+            var restaurantDoc = await restaurantTable.GetItemAsync(id, "Summary");
 
             return RestaurantSummaryMapper.MapFromDynamoDocument(restaurantDoc);
         }
@@ -85,14 +86,6 @@ namespace MKEToolInterview.Service
             var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
 
             await restaurantTable.UpdateItemAsync(document);
-        }
-
-        // This is split into a private method because getting the document will be needed for updates.
-        private async Task<Document> GetRestaurantDocumentById(string id)
-        {
-            var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
-
-            return await restaurantTable.GetItemAsync(id, "Summary");
         }
     }
 }
