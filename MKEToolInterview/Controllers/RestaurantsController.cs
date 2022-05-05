@@ -39,9 +39,14 @@ namespace MKEToolInterview.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<RestaurantSummary> GetRestaurantById(string id)
+        public async Task<ActionResult<RestaurantSummary>> GetRestaurantById(string id)
         {
-            return await RestaurantService.GetRestaurantById(id);
+            var restaurant = await RestaurantService.GetRestaurantById(id);
+            if (restaurant == null)
+            {
+                return new NotFoundResult();
+            }
+            return restaurant;
         }
 
         [HttpPut("{id}")]

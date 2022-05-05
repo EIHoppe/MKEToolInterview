@@ -71,7 +71,14 @@ namespace MKEToolInterview.Service
             var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
             var restaurantDoc = await restaurantTable.GetItemAsync(id, "Summary");
 
-            return RestaurantSummaryMapper.MapFromDynamoDocument(restaurantDoc);
+            RestaurantSummary summary = null;
+
+            if (restaurantDoc != null)
+            {
+                summary = RestaurantSummaryMapper.MapFromDynamoDocument(restaurantDoc);
+            }
+
+            return summary;
         }
 
         public async Task UpdateRestaurant(RestaurantSummary summary)
