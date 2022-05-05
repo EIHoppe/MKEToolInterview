@@ -59,9 +59,9 @@ namespace MKEToolInterview.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteRestaurant(string id)
+        public async Task<IActionResult> DeleteRestaurant(string id)
         {
-            // TODO (needed for interview version): implement delete
+            await RestaurantService.DeleteRestaurant(id);
 
             return new OkResult();
         }
