@@ -1,5 +1,7 @@
-﻿using Amazon.DynamoDBv2.Model;
+﻿using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using MKEToolInterview.Models;
+using MKEToolInterview.Service.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,16 +29,24 @@ namespace MKEToolInterview.Service.Mappers
             return values;
         }
 
-        public static RestaurantSummary MapFromDynamoAttributes(IDictionary<string, AttributeValue> attributeValues)
+        public static RestaurantSummary MapFromDynamoDocument(Document restaurantDocument)
         {
+            // Average Rating is nullable, so handle that separately first
+            var averageRatingText = DynamoDBDocumentAccessHelper.AccessDocumentAttribute(restaurantDocument, "AverageRating");
+            double? averageRating = null;
+            if (!string.IsNullOrEmpty(averageRatingText))
+            {
+                averageRating = double.Parse(averageRatingText);
+            }
+
             return new RestaurantSummary
             {
-                Id = Guid.Parse(attributeValues["RestaurantId"].S),
-                Name = attributeValues["Name"].S,
-                Address = attributeValues["Address"].S,
-                Description = attributeValues["Description"].S,
-                Hours = attributeValues["RestaurantId"].S,
-                AverageRating = double.Parse(attributeValues["RestaurantId"].N),
+                Id = Guid.Parse(DynamoDBDocumentAccessHelper.AccessDocumentAttribute(restaurantDocument, "RestaurantId")),
+                Name = DynamoDBDocumentAccessHelper.AccessDocumentAttribute(restaurantDocument, "Name"),
+                Address = DynamoDBDocumentAccessHelper.AccessDocumentAttribute(restaurantDocument, "Address"),
+                Description = DynamoDBDocumentAccessHelper.AccessDocumentAttribute(restaurantDocument, "Description"),
+                Hours = DynamoDBDocumentAccessHelper.AccessDocumentAttribute(restaurantDocument, "Hours"),
+                AverageRating = averageRating
             };
         }
     }
