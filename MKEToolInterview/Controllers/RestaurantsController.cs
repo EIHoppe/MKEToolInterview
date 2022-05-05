@@ -57,7 +57,7 @@ namespace MKEToolInterview.Controllers
             // Quick validation to make sure there isn't any weird things like the new version having a different ID
             if (summary.Id.ToString() != id)
             {
-                return BadRequest("Body's ID does not match the id in the URL");
+                return BadRequest("Body's ID does not match the ID in the URL");
             }
 
             // Ensure the restaurant's rating will not be updated, by nulling it out.
@@ -87,11 +87,16 @@ namespace MKEToolInterview.Controllers
             return new OkObjectResult(newId);
         }
 
-        [HttpPut("{id}/reviews/{reviewId}")]
-        public IActionResult UpdateReview(string id, string reviewId)
+        [HttpPut("{restaurantId}/reviews/{reviewId}")]
+        public async Task<IActionResult> UpdateReview(RestaurantReview review, string restaurantId, string reviewId)
         {
-            // TODO (needed for interview version): implement updating review in dynamo
-            // TODO: like create, have it update the average rating on the summary doc
+            // Quick validation to make sure the body's IDs all line up correctly
+            if (review.Id.ToString() != reviewId || review.RestaurantId.ToString() != restaurantId)
+            {
+                return BadRequest("Body's IDs do not match the IDs in the URL");
+            }
+
+            await ReviewService.UpdateReview(review);
 
             return new OkResult();
         }
