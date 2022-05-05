@@ -62,5 +62,20 @@ namespace MKEToolInterview.Service
 
             return results.Select(x => RestaurantSummaryMapper.MapFromDynamoDocument(x));
         }
+
+        public async Task<RestaurantSummary> GetRestaurantById(string id)
+        {
+            var restaurantDoc = await GetRestaurantDocumentById(id);
+
+            return RestaurantSummaryMapper.MapFromDynamoDocument(restaurantDoc);
+        }
+
+        // This is split into a private method because getting the document will be needed for updates.
+        private async Task<Document> GetRestaurantDocumentById(string id)
+        {
+            var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
+
+            return await restaurantTable.GetItemAsync(id, "Summary");
+        }
     }
 }

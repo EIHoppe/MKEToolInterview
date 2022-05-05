@@ -39,18 +39,9 @@ namespace MKEToolInterview.Controllers
         }
 
         [HttpGet("{id}")]
-        public RestaurantSummary GetRestaurantById(string id)
+        public async Task<RestaurantSummary> GetRestaurantById(string id)
         {
-            // TODO (needed for interview version): implement retrieving summary data from dynamo
-
-            return new RestaurantSummary
-            {
-                Name = "Restaurante Firste",
-                Address = "123 Fake Street Milwaukee, WI 53202",
-                Description = "It is a restaurant. It is also first.",
-                AverageRating = 4.3,
-                Hours = "Sun-Thurs 11-9, Fri-Sat 11-11"
-            };
+            return await RestaurantService.GetRestaurantById(id);
         }
 
         [HttpPut("{id}")]
