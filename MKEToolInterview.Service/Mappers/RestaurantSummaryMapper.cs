@@ -29,7 +29,6 @@ namespace MKEToolInterview.Service.Mappers
             return values;
         }
 
-        // This explicitly needs to be a Dictionary and not an IDictionary to match Dynamo's API.
         public static Document MapToDynamoDocument(RestaurantSummary summary)
         {
             var document = new Document();
