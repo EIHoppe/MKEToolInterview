@@ -29,6 +29,9 @@ namespace MKEToolInterview.Service
             // Generate a guid to act as the summary's ID, and apply it to the summary object to be stored in dynamo
             summary.Id = Guid.NewGuid();
 
+            // If the create is trying to set the average rating, clear it out; that will be computed once ratings exist.
+            summary.AverageRating = null;
+
             var attributeValues = RestaurantSummaryMapper.MapToDynamoAttributes(summary);
 
             var writeRequest = new WriteRequest
