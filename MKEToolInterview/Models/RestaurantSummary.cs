@@ -16,6 +16,6 @@ namespace MKEToolInterview.Models
         // tied to DateTime(Offset?) in the future, to allow for better formatting and possibly timezone data.
         public string Hours { get; set; }
 
-        public double AverageRating { get; set; }
+        public double? AverageRating { get; set; }
     }
 }

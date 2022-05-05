@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MKEToolInterview.Models;
 using System;
@@ -12,20 +14,40 @@ namespace MKEToolInterview.Controllers
     [ApiController]
     public class RestaurantsController : ControllerBase
     {
-        // TODO: probably should implement some sort of auth to e.g. restrict, say, deleting or updating to admin users
+        // TODO: probably would eventually implement some sort of auth to e.g. restrict, say, deleting or updating to admin users, but likely not fitting in the first pass.
 
         [HttpPost]
-        public IActionResult CreateRestaurant(RestaurantSummary summary)
+        public async Task<IActionResult> CreateRestaurant(RestaurantSummary summary)
         {
-            // TODO: implement storing summary data in dynamo, return ID stored
+            // TODO (needed for interview version): implement storing summary data in dynamo, return ID stored
+            var client = new AmazonDynamoDBClient();
 
-            return new OkResult();
+            // Generate a guid to act as the summary's ID, and apply it to the summary object to be stored
+            summary.Id = Guid.NewGuid();
+
+            var attributeValues = RestaurantSummaryMapper.MapToDynamoAttributes(summary);
+
+            // TODO: refactor the dynamo code into a more proper data access layer
+
+            var writeRequest = new WriteRequest
+            {
+                PutRequest = new PutRequest { Item = attributeValues }
+            };
+
+            var requestItems = new Dictionary<string, List<WriteRequest>>();
+            requestItems["mketool-restaurants"] = new List<WriteRequest> { writeRequest };
+
+            var request = new BatchWriteItemRequest { RequestItems = requestItems };
+
+            var response = await client.BatchWriteItemAsync(request);
+
+            return new OkObjectResult(response);
         }
 
         [HttpGet]
         public IEnumerable<RestaurantSummary> GetAllRestaurants()
         {
-            // TODO: implement retrieving summary data from dynamo
+            // TODO (needed for interview version): implement retrieving summary data from dynamo
 
             return new[]
             {
@@ -51,7 +73,7 @@ namespace MKEToolInterview.Controllers
         [HttpGet("{id}")]
         public RestaurantSummary GetRestaurantById(string id)
         {
-            // TODO: implement retrieving summary data from dynamo
+            // TODO (needed for interview version): implement retrieving summary data from dynamo
 
             return new RestaurantSummary
             {
@@ -66,7 +88,7 @@ namespace MKEToolInterview.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateRestaurant(RestaurantSummary summary, string id)
         {
-            // TODO: implement update
+            // TODO (needed for interview version): implement update
 
             return new OkResult();
         }
@@ -74,7 +96,7 @@ namespace MKEToolInterview.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteRestaurant(string id)
         {
-            // TODO: implement delete
+            // TODO (needed for interview version): implement delete
 
             return new OkResult();
         }
@@ -82,7 +104,7 @@ namespace MKEToolInterview.Controllers
         [HttpPost("{id}/reviews")]
         public IActionResult CreateReview(RestaurantReview review)
         {
-            // TODO: implement storing new review in dynamo, return ID stored
+            // TODO (needed for interview version): implement storing new review in dynamo, return ID stored
 
             // TODO: also have it update the average rating on the summary doc (keep a todo around because dynamo doesn't handle that great (but it is free!))
 
@@ -92,7 +114,7 @@ namespace MKEToolInterview.Controllers
         [HttpPut("{id}/reviews/{reviewId}")]
         public IActionResult UpdateReview(string id, string reviewId)
         {
-            // TODO: implement updating review in dynamo
+            // TODO (needed for interview version): implement updating review in dynamo
             // TODO: like create, have it update the average rating on the summary doc
 
             return new OkResult();
@@ -101,7 +123,7 @@ namespace MKEToolInterview.Controllers
         [HttpGet("{id}/reviews")]
         public IEnumerable<RestaurantReview> GetReviewsForRestaurant(string id)
         {
-            // TODO: implement retrieving reviews from dynamo
+            // TODO (needed for interview version): implement retrieving reviews from dynamo
 
             return new[] {
                 new RestaurantReview
@@ -122,7 +144,7 @@ namespace MKEToolInterview.Controllers
         [HttpGet("{id}/reviews/{reviewId}")]
         public RestaurantReview GetReviewById(string id, string reviewId)
         {
-            // TODO: implement retrieving reviews from dynamo
+            // TODO (needed for interview version): implement retrieving reviews from dynamo
 
             return new RestaurantReview
             {
@@ -135,7 +157,7 @@ namespace MKEToolInterview.Controllers
         [HttpDelete("{id}/reviews/{reviewId}")]
         public IActionResult DeleteReviewById(string id, string reviewId)
         {
-            // TODO: implement deleting reviews from dynamo
+            // TODO (needed for interview version): implement deleting reviews from dynamo
 
             return new OkResult();
         }
