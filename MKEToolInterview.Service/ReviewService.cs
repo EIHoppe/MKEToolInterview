@@ -98,6 +98,9 @@ namespace MKEToolInterview.Service
 
         public async Task UpdateReview(RestaurantReview review)
         {
+            // Pin the rating to the range of 0 - 5
+            review.Rating = Math.Min(Math.Max(0, review.Rating), 5);
+
             var document = RestaurantReviewMapper.MapToDynamoDocument(review);
             var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
 
