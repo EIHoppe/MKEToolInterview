@@ -75,6 +75,8 @@ namespace MKEToolInterview.Controllers
         public async Task<IActionResult> DeleteRestaurant(string id)
         {
             await RestaurantService.DeleteRestaurant(id);
+            // Because the reviews would be orphaned anyway, delete all of the associated reviews when deleting a restaurant.
+            await ReviewService.DeleteAllReviewsForRestaurant(id);
 
             return new OkResult();
         }

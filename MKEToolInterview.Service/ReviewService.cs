@@ -117,6 +117,22 @@ namespace MKEToolInterview.Service
             await UpdateAverageRatingOnRestaurant(restaurant);
         }
 
+        public async Task DeleteAllReviewsForRestaurant(string restaurantId)
+        {
+            // Dynamo doesn't support a query-based delete, so you have to get all the relevant IDs and delete them one at a time.
+            // This could theoretically be done via a batching API, but that is being deferred from this initial implementation.
+
+            var reviews = await GetAllReviewsForRestaurant(restaurantId);
+            var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
+
+            foreach (var review in reviews)
+            {
+                // We don't want to use the DeleteReview() call here, as that includes average rating updating.
+                // Instead, just do the dynamo calls to delete as applicable.
+                await restaurantTable.DeleteItemAsync(restaurantId, $"Review#{review.Id}");
+            }
+        }
+
         private async Task UpdateAverageRatingOnRestaurant(RestaurantSummary summary)
         {
             var reviews = (await GetAllReviewsForRestaurant(summary.Id.ToString())).ToList();

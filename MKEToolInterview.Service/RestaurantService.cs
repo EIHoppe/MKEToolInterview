@@ -96,8 +96,6 @@ namespace MKEToolInterview.Service
         {
             var restaurantTable = Table.LoadTable(DynamoDBClient, TableName);
             await restaurantTable.DeleteItemAsync(id, "Summary");
-
-            // TODO: once reviews are implemented, make sure all relevant reviews for the restaurant are also deleted.
         }
     }
 }
