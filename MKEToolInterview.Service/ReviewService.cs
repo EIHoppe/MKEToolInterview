@@ -15,12 +15,13 @@ namespace MKEToolInterview.Service
     {
         private RestaurantService RestaurantService { get; set; }
         private AmazonDynamoDBClient DynamoDBClient { get; set; }
-        private const string TableName = "mketool-restaurants";
+        private readonly string TableName;
 
-        public ReviewService(RestaurantService restaurantService, AmazonDynamoDBClient dynamoDbClient)
+        public ReviewService(RestaurantService restaurantService, AmazonDynamoDBClient dynamoDbClient, string tableName = "mketool-restaurants")
         {
             RestaurantService = restaurantService;
             DynamoDBClient = dynamoDbClient;
+            TableName = tableName;
         }
 
         public async Task<Guid?> CreateNewReview(RestaurantReview review, string restaurantId)

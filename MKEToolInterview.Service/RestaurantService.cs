@@ -17,11 +17,12 @@ namespace MKEToolInterview.Service
     public class RestaurantService
     {
         private AmazonDynamoDBClient DynamoDBClient { get; set; }
-        private const string TableName = "mketool-restaurants";
+        private readonly string TableName;
 
-        public RestaurantService(AmazonDynamoDBClient dynamoDbClient)
+        public RestaurantService(AmazonDynamoDBClient dynamoDbClient, string tableName = "mketool-restaurants")
         {
             DynamoDBClient = dynamoDbClient;
+            TableName = tableName;
         }
 
         public async Task<Guid> CreateNewRestaurant(RestaurantSummary summary)
